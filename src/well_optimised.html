@@ -1,0 +1,56 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Vitals Optimisation Workshop</title>
+
+    <!-- inline styles that are critical to first paint -->
+    <style>
+        @font-face {
+            font-family: 'Inter';
+            src: url('https://fonts.gstatic.com/s/inter/v18/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2');
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .red-box {
+            width: 100%;
+            height: 200px;
+            background-color: red;
+            margin-top: 20px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://www.sykescottages.co.uk/css/white_label/sykes-desktop-style.css" />
+    <!-- scripts deferred -->
+    <script src="scripts/optimisedPageScripts.js" defer></script>
+</head>
+<body>
+    
+    <h1>Web Vitals Optimisation Workshop</h1>
+    <p>This page is optimised for performance metrics: LCP, FCP, CLS, and TBT/INP.</p>
+
+    <!-- Optimised image for LCP -->
+    <img src="./images/bloom-bg-gradient.svg" alt="Optimised Image" height="300px"
+        fetchpriority="high"
+    />
+
+    <!-- Avoid inline styles -->
+    <div class="red-box">
+        <p>This is a red box without inline styles.</p>
+    </div>
+
+    <!-- Prevent CLS by reserving space for dynamic content -->
+    <div id="dynamicContent" style="margin-top: 20px; min-height: 60px;">
+        <p>Content will be added here dynamically.</p>
+    </div>
+
+    <!-- Reduced DOM elements -->
+    <div>
+        <ul>
+            <li>Item 1</li>
+            <li>Item 2</li>
+            <li>Item 3</li>
+        </ul>
+    </div>
+</body>
+</html>

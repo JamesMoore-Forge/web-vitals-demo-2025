@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Worker Example</title>
+</head>
+
+<body>
+
+<h1>Web Vitals Workshop -- No Worker Examples</h1>
+
+<h2>Find Prime Numbers in a Range</h2>
+<p>Enter a range of numbers to find all prime numbers within that range.</p>
+<input type="number" id="start" placeholder="Start" />
+<input type="number" id="end" placeholder="End" />
+<button onclick="findPrimesInRangeNoWorker()">Find Primes</button>
+<div id="result"></div>
+
+<h2>Convert PNG to JPG</h2>
+<p>Select a PNG image to convert it to JPG format.</p>
+<input type="file" id="imageInput" accept="image/png" />
+<button onclick="convertImageNoWorker()">Convert</button>
+<canvas id="canvas" style="display: none;"></canvas>
+<a id="downloadLink" style="display: none;">Download JPG</a>
+
+<h2>Simulate Long Running Task</h2>
+<p>Click the button below to simulate a long-running task.</p>
+<button onclick="simulateLongTaskNoWorker()">Simulate Task</button>
+<div id="taskResult"></div>
+
+</body>
+</html>
+
+<script>
+    function findPrimesInRangeNoWorker() {
+        const start = parseInt(document.getElementById('start').value, 10);
+        const end = parseInt(document.getElementById('end').value, 10);
+
+        if (isNaN(start) || isNaN(end)) {
+            alert('Please enter valid numbers for range');
+            return;
+        }
+
+        console.log('Starting prime number calculation for range:', start, 'to', end);
+
+        const primes = [];
+        for (let i = start; i <= end; i++) {
+            if (isPrime(i)) {
+                primes.push(i);
+            }
+        }
+
+        console.log('Prime numbers calculated:', primes);
+        document.getElementById('result').textContent = 'Primes: ' + primes.join(', ');
+    }
+
+    function isPrime(num) {
+        if (num < 2) return false;
+        for (let i = 2; i <= Math.sqrt(num); i++) {
+            if (num % i === 0) return false;
+        }
+        return true;
+    }
+
+    function convertImageNoWorker() {
+        const fileInput = document.getElementById('imageInput');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert('Please select a PNG image to convert');
+            return;
+        }
+
+        console.log('Starting PNG to JPG conversion');
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            const img = new Image();
+            img.src = reader.result;
+
+            img.onload = () => {
+                const canvas = document.getElementById('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+
+                canvas.toBlob((blob) => {
+                    const downloadLink = document.getElementById('downloadLink');
+                    downloadLink.href = URL.createObjectURL(blob);
+                    downloadLink.download = 'converted.jpg';
+                    downloadLink.style.display = 'block';
+                    downloadLink.textContent = 'Download Converted JPG';
+
+                    console.log('PNG to JPG conversion complete');
+                }, 'image/jpeg', 0.8);
+            };
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function simulateLongTaskNoWorker() {
+        console.log('Starting long-running task simulation');
+
+        const duration = 5000; // Simulate a 5-second task
+        const start = Date.now();
+        while (Date.now() - start < duration) {
+            // Simulate blocking the thread
+        }
+
+        console.log('Long-running task completed');
+        document.getElementById('taskResult').textContent = 'Task completed after ' + duration + 'ms';
+    }
+</script>

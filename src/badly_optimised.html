@@ -1,0 +1,76 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Vitals Optimisation Workshop</title>
+</head>
+<body>
+    <h1>Web Vitals Optimisation Workshop</h1>
+    <p>This page is intentionally badly optimised. Your task is to improve its performance metrics: LCP, FCP, CLS, and TBT/INP.</p>
+    
+    <!-- Large Hero Banner image causing poor LCP. Hint: check the images directory -->
+    <img 
+        src="https://media.sykesassets.co.uk/whitelabels/sykes_hero/bloomLoyalty2025/bloom-header.png" 
+        alt="Large Image" 
+        height="300px"
+        loading="lazy"
+    />
+    
+    <!-- Inline styles causing render-blocking -->
+    <div style="width: 100%; height: 200px; background-color: red; margin-top: 20px;">
+        <p style="color: white;">This is a red box with inline styles.</p>
+    </div>
+    
+    <!-- A critical JavaScript task causing TBT issues, this could be offloaded to a worker? -->
+    <script>
+        const start = Date.now();
+        while (Date.now() - start < 3000) {
+            // Simulate a long-running task
+        }
+        console.log('Long task completed');
+    </script>
+    
+    <!-- Poor CLS due to dynamically added content -->
+    <div id="dynamicContent" style="margin-top: 20px;">
+        <p>Content will be added here dynamically.</p>
+    </div>
+    <script>
+        setTimeout(() => {
+            const newContent = document.createElement('p');
+            newContent.textContent = 'This content was added dynamically, causing layout shift.';
+            document.getElementById('dynamicContent').appendChild(newContent);
+        }, 2000);
+    </script>
+    
+    <!-- Render-blocking external resource -->
+    <link rel="stylesheet" href="https://www.sykescottages.co.uk/css/white_label/sykes-desktop-style.css" />
+    
+    <!-- Unoptimised font loading -->
+    <style>
+        @font-face {
+            font-family: 'Inter';
+            src: url('https://fonts.gstatic.com/s/inter/v18/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2');
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    
+    <!-- Unnecessary DOM elements -->
+    <div>
+        <ul>
+            <!-- Excessive DOM nodes -->
+            <li>Item 1</li>
+            <li>Item 2</li>
+            <li>Item 3</li>
+            <li>Item 4</li>
+            <li>Item 5</li>
+            <li>Item 6</li>
+            <li>Item 7</li>
+            <li>Item 8</li>
+            <li>Item 9</li>
+            <li>Item 10</li>
+        </ul>
+    </div>
+</body>
+</html>

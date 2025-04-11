@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Worker Example</title>
+</head>
+
+<body>
+
+    <h1>Web Vitals Workshop -- Worker examples</h1>
+
+    <section>
+        <h2>Find Prime Numbers in a Range</h1>
+        <p>Enter a range of numbers to find all prime numbers within that range.</p>
+    
+        <input type="number" id="start" placeholder="Start" />
+        <input type="number" id="end" placeholder="End" />
+        <button onclick="findPrimesInRange()">Find Primes</button>
+        <div id="result"></div>
+    </section>
+
+    <hr style="margin: 24px 0; border: 1px solid #ccc;">
+
+    <section>
+        <h2>Convert PNG to JPG</h1>
+        <p>Select a PNG image to convert it to JPG format.</p>
+        <input type="file" id="imageInput" accept="image/png" />
+        <button onclick="convertImage()">Convert</button>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <a id="downloadLink" style="display: none;">Download JPG</a>
+    </section>
+
+    <hr style="margin: 24px 0; border: 1px solid #ccc;">
+
+    <section>
+        <h2>Simulate Long Running Task</h1>
+        <p>Click the button below to simulate a long-running task using a Web Worker.</p>
+        <button onclick="simulateLongTask()">Simulate Task</button>
+        <div id="taskResult"></div>
+    </section>
+
+    <script>
+         // Initialise the workers
+         const primesWorker = new Worker('scripts/primes.js');
+         const imageWorker = new Worker('scripts/imageConverter.js');
+         const longTaskWorker = new Worker('scripts/longTaskSimulator.js');
+
+        // Function to initiate the process
+        function findPrimesInRange() {
+            const start = parseInt(document.getElementById('start').value, 10);
+            const end = parseInt(document.getElementById('end').value, 10);
+
+            if (isNaN(start) || isNaN(end)) {
+                alert('Please enter valid numbers for range');
+                return;
+            }
+
+            console.log('Starting prime number calculation for range:', start, 'to', end);
+
+            const worker = primesWorker;
+
+            // Listen for messages from the Web Worker
+            worker.addEventListener('message', (event) => {
+                console.log('Prime numbers received from worker:', event.data);
+                document.getElementById('result').textContent = 'Primes: ' + event.data.join(', ');
+                worker.terminate(); // Terminate the worker when done
+            });
+
+            // Send the range data to the Web Worker
+            worker.postMessage({ start, end });
+        }
+
+        // Function to convert PNG to JPG
+        function convertImage() {
+            const fileInput = document.getElementById('imageInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select a PNG image to convert');
+                return;
+            }
+
+            console.log('Starting PNG to JPG conversion');
+
+            const worker = imageWorker;
+
+            worker.addEventListener('message', (event) => {
+                console.log('Converted image data received from worker');
+                const { imageDataUrl } = event.data;
+                const downloadLink = document.getElementById('downloadLink');
+                downloadLink.href = imageDataUrl;
+                downloadLink.download = 'converted.jpg';
+                downloadLink.style.display = 'block';
+                downloadLink.textContent = 'Download Converted JPG';
+                worker.terminate();
+            });
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                worker.postMessage({ imageDataUrl: reader.result });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Function to simulate a long-running task
+        function simulateLongTask() {
+            console.log('Starting long-running task simulation');
+
+            const worker = longTaskWorker;
+
+            worker.addEventListener('message', (event) => {
+                console.log('Long-running task completed');
+                document.getElementById('taskResult').textContent = event.data;
+                worker.terminate();
+            });
+
+            worker.postMessage({ duration: 10000 }); // Simulate a 10-second task
+        }
+    </script>
+</body>
+
+</html>
